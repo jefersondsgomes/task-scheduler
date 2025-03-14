@@ -2,18 +2,20 @@
 
 namespace WorkerService.Services;
 
-public class TaskService(ILogger<TaskService> logger) : ITaskService
+public abstract class TaskService(ILogger<TaskService> logger) : ITaskService
 {
+    public string Id { get; } = Guid.NewGuid().ToString();
+    public abstract string Name { get; }
+    public bool IsRunning { get; private set; }
+
+
     private readonly ILogger<TaskService> _logger = logger;
 
     private static readonly Random _random = new();
 
-    public string Id { get; } = Guid.NewGuid().ToString();
-    public bool IsRunning { get; private set; }
-    
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async virtual Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Starting '{Id}' task execution", Id);
+        _logger.LogInformation("Starting {Name} - '{Id}' task execution", Name, Id);
 
         if (IsRunning)
         {
@@ -34,7 +36,7 @@ public class TaskService(ILogger<TaskService> logger) : ITaskService
 
             if (error)
             {
-                throw new Exception($"Task '{Id}' failed during execution");
+                throw new Exception($"Task {Name} - '{Id}' failed during execution");
             }
 
             await Task.Delay(taskDurationInSeconds, cancellationToken);
@@ -50,6 +52,6 @@ public class TaskService(ILogger<TaskService> logger) : ITaskService
             IsRunning = false;
         }
 
-        _logger.LogInformation("Task executed successfully");
+        _logger.LogInformation("Task {Name} - '{Id}' executed successfully", Name, Id);
     }
 }

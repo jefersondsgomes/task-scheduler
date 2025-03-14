@@ -1,3 +1,5 @@
+using WorkerService.BackgroundTasks;
+using WorkerService.Extensions;
 using WorkerService.Services;
 using WorkerService.Services.Interfaces;
 
@@ -10,8 +12,16 @@ namespace WorkerService
             var builder = Host.CreateApplicationBuilder(args);
 
             builder.Services
-                .AddTransient<ITaskService, TaskService>()
-                .AddHostedService<PeriodicTimerTask>();
+                .AddSingleton<IPeriodicTimerTaskService, PeriodicTimerTaskService>()
+                .AddSingleton<IHangfireTaskService, HangfireTaskService>()
+                .AddSingleton<IQuartzTaskService, QuartzTaskService>()
+                .ConfigureHangfire()
+                .ConfigureQuartz();
+
+            builder.Services
+                .AddHostedService<PeriodicTimerTask>()
+                .AddHostedService<HangfireTask>()
+                .AddHostedService<QuartzTask>();
 
             var host = builder.Build();
 

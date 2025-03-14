@@ -45,6 +45,9 @@ public abstract class TaskService(ILogger<TaskService> logger) : ITaskService
         {
             _logger.LogError("{Message}", ex.Message);
 
+            // Throw the exception will require handling configurations for Hangfire and Quartz.
+            // throw;
+
             return;
         }
         finally

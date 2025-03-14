@@ -5,22 +5,22 @@ namespace WorkerService.BackgroundTasks;
 
 public class QuartzTask(
     ISchedulerFactory schedulerFactory,
-    IQuartzTaskService quartzTaskService,
     ILogger<QuartzTask> logger) : BackgroundService
 {
     private const int FREQUENCY_IN_SECONDS = 5;
 
     private readonly ISchedulerFactory _schedulerFactory = schedulerFactory;
-    private readonly IQuartzTaskService _quartzTaskService = quartzTaskService;
     private readonly ILogger<QuartzTask> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // Create job configuration, the type must implement IJob interface
         var job = JobBuilder
             .Create<IQuartzTaskService>()
-            .WithIdentity(_quartzTaskService.Id, nameof(IQuartzTaskService))
+            .WithIdentity("QuartzTask", nameof(IQuartzTaskService))
             .Build();
 
+        // Create trigger behavior
         var trigger = TriggerBuilder
             .Create()
             .StartNow()

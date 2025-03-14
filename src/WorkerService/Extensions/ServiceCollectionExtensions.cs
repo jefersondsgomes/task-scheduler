@@ -28,6 +28,7 @@ internal static class ServiceCollectionExtensions
 
     internal static IServiceCollection ConfigureQuartz(this IServiceCollection services)
     {
+        // Configure quartz dependencies
         services.AddQuartz(quartzConfig =>
         {
             quartzConfig.UseDefaultThreadPool(config => config.MaxConcurrency = 1);
@@ -35,6 +36,7 @@ internal static class ServiceCollectionExtensions
             quartzConfig.UseInMemoryStore();
         });
 
+        // Initialize quartz application
         services.AddQuartzHostedService(quartz =>
         {
             quartz.AwaitApplicationStarted = true;

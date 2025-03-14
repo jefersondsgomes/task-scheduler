@@ -14,7 +14,9 @@ namespace WorkerService
             builder.Services
                 .AddSingleton<IPeriodicTimerTaskService, PeriodicTimerTaskService>()
                 .AddSingleton<IHangfireTaskService, HangfireTaskService>()
-                .AddSingleton<IQuartzTaskService, QuartzTaskService>()
+                .AddSingleton<IQuartzTaskService, QuartzTaskService>();
+
+            builder.Services
                 .ConfigureHangfire()
                 .ConfigureQuartz();
 
